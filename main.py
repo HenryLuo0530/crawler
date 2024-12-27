@@ -35,8 +35,12 @@ for all in elements:
     data["time_and_quality"] = time_quality_list
 
     data_list.append(data)
-print(data_list)
 
+with open("seeings.json", "w", encoding="utf-8") as file:
+    json.dump(data_list, file, ensure_ascii=False, indent=4)
+print("Data has been stored successfully")
+
+#print(data_list)
 #print(response.text)
 """
 if response.status_code == 200:
