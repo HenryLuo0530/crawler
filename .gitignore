@@ -2,3 +2,5 @@ python_env/
 rawdata.html
 test.txt
 seeings.json
+setting.json
+.DS_Store
