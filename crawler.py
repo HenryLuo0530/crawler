@@ -2,43 +2,46 @@ import requests
 from bs4 import BeautifulSoup
 import json
 
-url = "https://clearoutside.com/forecast/25.04/121.56?view=midnight"
-headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.6 Safari/605.1.15'}
-response = requests.get(url, headers=headers)
-soup = BeautifulSoup(response.text, "html.parser")
-elements = soup.find_all("div", class_="fc_day")
-data_list = []
-for all in elements:
-    data = {}
+def crawl():
+    url = "https://clearoutside.com/forecast/25.04/121.56?view=midnight"
+    headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.6 Safari/605.1.15'}
+    response = requests.get(url, headers=headers)
+    soup = BeautifulSoup(response.text, "html.parser")
+    elements = soup.find_all("div", class_="fc_day", limit=3)
+    data_list = []
+    for all in elements:
+        data = {}
 
-    #處理日期
-    dates = all.find("div", class_="fc_day_date")
-    date = dates.text
-    data["date"] = date
+        #處理日期
+        dates = all.find("div", class_="fc_day_date")
+        date = dates.text
+        data["date"] = date
 
-    #處理時間和品質
-    ul = all.find("div", class_="fc_hours fc_hour_ratings")
-    lis_bad  = ul.find_all("li", class_="fc_bad")
-    lis_ok   = ul.find_all("li", class_="fc_ok")
-    lis_good = ul.find_all("li", class_="fc_good")
-    time_quality_list = []
-    for li in lis_bad:
-        time_quality = li.text
-        time_quality_list.append(time_quality)
-    for li in lis_ok:
-        time_quality = li.text
-        time_quality_list.append(time_quality)
-    for li in lis_good:
-        time_quality = li.text
-        time_quality_list.append(time_quality)
-    time_quality_list.sort()
-    data["time_and_quality"] = time_quality_list
+        #處理時間和品質
+        ul = all.find("div", class_="fc_hours fc_hour_ratings")
+        lis_bad  = ul.find_all("li", class_="fc_bad")
+        lis_ok   = ul.find_all("li", class_="fc_ok")
+        lis_good = ul.find_all("li", class_="fc_good")
+        time_quality_list = []
+        for li in lis_bad:
+            time_quality = li.text
+            time_quality_list.append(time_quality)
+        for li in lis_ok:
+            time_quality = li.text
+            time_quality_list.append(time_quality)
+        for li in lis_good:
+            time_quality = li.text
+            time_quality_list.append(time_quality)
+        time_quality_list.sort()
+        data["time_and_quality"] = time_quality_list
 
-    data_list.append(data)
+        data_list.append(data)
 
-with open("seeings.json", "w", encoding="utf-8") as file:
-    json.dump(data_list, file, ensure_ascii=False, indent=4)
-print("Data has been stored successfully")
+    with open("seeings.json", "w", encoding="utf-8") as file:
+        json.dump(data_list, file, ensure_ascii=False, indent=4)
+    print("Data has been stored successfully")
+    
+    return data_list
 
 #print(data_list)
 #print(response.text)

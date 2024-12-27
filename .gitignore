@@ -4,3 +4,4 @@ test.txt
 seeings.json
 setting.json
 .DS_Store
+__pycache__/
