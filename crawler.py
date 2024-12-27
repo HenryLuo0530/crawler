@@ -15,7 +15,7 @@ def crawl(days: int, latitude: int, longitude: int) -> list:
         #處理日期
         dates = all.find("div", class_="fc_day_date")
         date = dates.text
-        data["date"] = date
+        data["dates"] = date
 
         #處理時間和品質
         ul = all.find("div", class_="fc_hours fc_hour_ratings")
