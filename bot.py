@@ -18,8 +18,9 @@ async def ping(ctx):
     await ctx.send(f'{round(bot.latency*1000)} (ms)')
 
 @bot.command()
-async def seeings(ctx):
-    data = crawler.crawl()
+async def seeing(ctx, days=3, latitude=25.02, longitude=121.54):
+    if(days >= 7): days = 7
+    data = crawler.crawl(days, latitude, longitude)
     for d in data:
         await ctx.send(f'**{d["date"]}**')
         await ctx.send("=> 00    01   02    03   04   05   06    07   08   09   10     11     12    13    14    15    16     17    18    19    20    21    22   23")
