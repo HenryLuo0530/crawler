@@ -23,26 +23,94 @@ async def seeing(ctx, limit_days=3, mode=1, latitude=25.17, longitude=121.56):
     if(limit_days >= 7): limit_days = 7
     elif(limit_days <= 1): limit_days = 1
     data = crawler.crawl(limit_days, latitude, longitude)
-    for d in data:
-        day_and_date = d["dates"].split(" ")
-        day = day_and_date[0]
-        date = day_and_date[1]
-        translated_day = tools.dayTranslation(day)
-        day_and_date_message = translated_day + " " + date
-        await ctx.send(day_and_date_message)
-        time_table = "=> 00    01   02    03   04   05   06    07   08   09   10     11     12    13    14    15    16     17    18    19    20    21    22   23"
-        await ctx.send(time_table)
-        msg = "=> "
-        for tq in d["time_and_quality"]:
+    if mode == 0:
+        day_and_dates = []
+        time_and_qualities = []
+        for d in data:
+            day_and_dates.append(d["dates"])
+            time_and_qualities += d["time_and_quality"]
+        print(day_and_dates)
+        print(time_and_qualities)
+        
+        current_day = 0
+        head_day = 0
+
+        head_time = 0
+        previous_time = 0
+
+        current_max_hour = 0
+
+        is_first = True
+        is_continue = False
+
+        find_list = []
+        for tq in time_and_qualities:
             time_and_quality = tq.split(" ")
-            time = time_and_quality[1]
+            time = int(time_and_quality[1])
             quality = time_and_quality[2]
-            if quality == "Bad":
-                msg += ":red_circle:  "
-            elif quality == "OK":
-                msg += ":orange_circle:  "
+            if (quality == "Bad") and (not (6 <= time <= 17)):
+                if is_first:
+                    head_day = current_day
+                    head_time = time
+                    is_first = False
+                previous_time = time
+                current_max_hour += 1
+                is_continue = True
             else:
-                msg += ":green_circle:  "
-        await ctx.send(msg)
+                if is_continue:
+                    find_dict = {}
+                    find_dict["start_day"] = day_and_dates[head_day]
+                    find_dict["end_day"] = day_and_dates[current_day]
+                    find_dict["start_time"] = head_time
+                    find_dict["end_time"] = previous_time
+                    find_dict["max_hour"] = current_max_hour
+                    find_list.append(find_dict)
+                    current_max_hour = 0
+                    is_first = True
+                    is_continue = False
+                else:
+                    pass
+            
+            if (time == 23):
+                current_day += 1
+        
+        if is_continue:
+            find_dict = {}
+            find_dict["start_day"] = day_and_dates[head_day]
+            find_dict["end_day"] = day_and_dates[current_day - 1]
+            find_dict["start_time"] = head_time
+            find_dict["end_time"] = previous_time
+            find_dict["max_hour"] = current_max_hour
+            find_list.append(find_dict)
+
+        if not find_list:
+            await ctx.send("Oh no! Migu canNOT find good hours!")
+        else:
+            for info in find_list:
+                msg = f'{info["start_day"]} {info["start_time"]}:00 ~ {info["end_day"]} {info["end_time"]}:00 max {info["max_hour"]}hr'
+                await ctx.send(msg)
+
+    elif mode == 1:
+        for d in data:
+            day_and_date = d["dates"].split(" ")
+            day = day_and_date[0]
+            date = day_and_date[1]
+            translated_day = tools.dayTranslation(day)
+            day_and_date_message = translated_day + " " + date
+            await ctx.send(day_and_date_message)
+            time_table = "=> 00    01   02    03   04   05   06    07   08   09   10     11     12    13    14    15    16     17    18    19    20    21    22   23"
+            await ctx.send(time_table)
+            msg = "=> "
+            for tq in d["time_and_quality"]:
+                time_and_quality = tq.split(" ")
+                time = time_and_quality[1]
+                quality = time_and_quality[2]
+                if quality == "Bad":
+                    msg += ":red_circle:  "
+                elif quality == "OK":
+                    msg += ":orange_circle:  "
+                else:
+                    msg += ":green_circle:  "
+            await ctx.send(msg)
 
 bot.run(setting["TOKEN"])
