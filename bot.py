@@ -3,6 +3,7 @@ from discord.ext import commands
 import json
 import crawler
 import tools
+import random
 
 with open("setting.json", "r", encoding="utf-8") as file:
     setting = json.load(file)
@@ -108,10 +109,15 @@ async def seeing(ctx, limit_days="3", mode="1", latitude="25.17", longitude="121
             find_list.append(find_dict)
 
         if not find_list:
-            await ctx.send("Oh no! Migu canNOT find good hours!")
+            rand = random.randint(0, 1)
+            match rand:
+                case 0:
+                    await ctx.send("Oh no! Migu canNOT find good hours!")
+                case 1:
+                    await ctx.send("Oh wow! Migu see beautiful clouds!")
         else:
             for info in find_list:
-                msg = f'{info["start_day"]} {info["start_time"]}:00 ~ {info["end_day"]} {info["end_time"]}:00 max {info["max_hour"]}hr'
+                msg = f'{tools.dayTranslation(info["start_day"])} {info["start_time"]}:00 ~ {tools.dayTranslation(info["end_day"])} {info["end_time"]}:00 max {info["max_hour"]}hr'
                 await ctx.send(msg)
 
     elif mode == 1:
