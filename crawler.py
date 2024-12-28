@@ -9,8 +9,8 @@ def crawl(days: int, latitude: int, longitude: int) -> int:
     if response.status_code == 200:
         print("[S] Succeed to request web data.")
     else:
-        print("[E] Failed to request web data")
-        print(f"[E] Response status code {response.status_code}")
+        print("[E] Failed to request web data.")
+        print(f"[E] Response status code {response.status_code}.")
         return 1
     soup = BeautifulSoup(response.text, "html.parser")
     elements = soup.find_all("div", class_="fc_day", limit=days)
@@ -45,5 +45,5 @@ def crawl(days: int, latitude: int, longitude: int) -> int:
 
     with open("seeings.json", "w", encoding="utf-8") as file:
         json.dump(data_list, file, ensure_ascii=False, indent=4)
-    print("[S] Data has been stored successfully")
+    print("[S] Data has been stored successfully.")
     return 0

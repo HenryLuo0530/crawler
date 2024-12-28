@@ -14,3 +14,11 @@ def dayTranslation(day_and_date: str) -> str:
     translated_day = dict[day]
     msg = translated_day + " " + date
     return msg
+
+def check_input(limit_days: int, mode: int, latitude: int, longitude: int) -> int:
+    if (limit_days < 1): return 1
+    elif (limit_days > 7): return 2
+
+    if not(0 <= mode <= 1): return 3
+    
+    return 0

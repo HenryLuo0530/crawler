@@ -16,15 +16,23 @@ async def on_ready():
 
 @bot.command()
 async def ping(ctx):
-    await ctx.send(f'{round(bot.latency*1000)} (ms)')
+    await ctx.send(f'Migu is {round(bot.latency*1000)} years old')
 
 @bot.command()
 async def seeing(ctx, limit_days=3, mode=1, latitude=25.17, longitude=121.56):
-    if(limit_days >= 7): limit_days = 7
-    elif(limit_days <= 1): limit_days = 1
+    input_status_code = tools.check_input(limit_days, mode, latitude, longitude)
+    if input_status_code > 0:
+        match input_status_code:
+            case 1:
+                await ctx.send("Sorrgy Migu see nothing...")
+            case 2:
+                await ctx.send("Migu is NOT A SOOTHSAYER :rage:")
+            case 3:
+                await ctx.send("OH NO! Migu does not talk to british ppl")
+        return
 
-    ststus_code = crawler.crawl(limit_days, latitude, longitude)
-    if (ststus_code == 1):
+    crawler_ststus_code = crawler.crawl(limit_days, latitude, longitude)
+    if (crawler_ststus_code == 1):
         await ctx.send("Sorrgy accident... Migu broke the web")
         return
     with open("seeings.json", "r", encoding="utf-8") as file:
@@ -36,8 +44,6 @@ async def seeing(ctx, limit_days=3, mode=1, latitude=25.17, longitude=121.56):
         for d in data:
             day_and_dates.append(d["dates"])
             time_and_qualities += d["time_and_quality"]
-        print(day_and_dates)
-        print(time_and_qualities)
         
         current_day = 0
         head_day = 0
