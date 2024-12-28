@@ -1,4 +1,4 @@
-def dayTranslation(day: str) -> str:
+def dayTranslation(day_and_date: str) -> str:
     dict = {
         "Monday"   : "星期一",
         "Tuesday"  : "星期二",
@@ -8,5 +8,9 @@ def dayTranslation(day: str) -> str:
         "Saturday" : "星期六",
         "Sunday"   : "星期日"
     }
-    translation = dict[day]
-    return translation
+    time_list = day_and_date.split(" ")
+    day = time_list[0]
+    date = time_list[1]
+    translated_day = dict[day]
+    msg = translated_day + " " + date
+    return msg

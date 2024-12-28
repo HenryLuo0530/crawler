@@ -22,7 +22,14 @@ async def ping(ctx):
 async def seeing(ctx, limit_days=3, mode=1, latitude=25.17, longitude=121.56):
     if(limit_days >= 7): limit_days = 7
     elif(limit_days <= 1): limit_days = 1
-    data = crawler.crawl(limit_days, latitude, longitude)
+
+    ststus_code = crawler.crawl(limit_days, latitude, longitude)
+    if (ststus_code == 1):
+        await ctx.send("Sorrgy accident... Migu broke the web")
+        return
+    with open("seeings.json", "r", encoding="utf-8") as file:
+        data = json.load(file)
+
     if mode == 0:
         day_and_dates = []
         time_and_qualities = []
@@ -48,7 +55,7 @@ async def seeing(ctx, limit_days=3, mode=1, latitude=25.17, longitude=121.56):
             time_and_quality = tq.split(" ")
             time = int(time_and_quality[1])
             quality = time_and_quality[2]
-            if (quality == "Bad") and (not (6 <= time <= 17)):
+            if (quality == "Good") and (not (6 <= time <= 17)):
                 if is_first:
                     head_day = current_day
                     head_time = time
@@ -92,12 +99,8 @@ async def seeing(ctx, limit_days=3, mode=1, latitude=25.17, longitude=121.56):
 
     elif mode == 1:
         for d in data:
-            day_and_date = d["dates"].split(" ")
-            day = day_and_date[0]
-            date = day_and_date[1]
-            translated_day = tools.dayTranslation(day)
-            day_and_date_message = translated_day + " " + date
-            await ctx.send(day_and_date_message)
+            translated_day_date = tools.dayTranslation(d["dates"])
+            await ctx.send(translated_day_date)
             time_table = "=> 00    01   02    03   04   05   06    07   08   09   10     11     12    13    14    15    16     17    18    19    20    21    22   23"
             await ctx.send(time_table)
             msg = "=> "
