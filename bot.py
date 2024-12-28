@@ -27,7 +27,7 @@ async def seeing(ctx, limit_days="3", mode="1", latitude="25.17", longitude="121
         mode = int(mode)
         latitude = float(latitude)
         longitude = float(longitude)
-    except ValueError:
+    except:
         input_status_code = 10
     else:    
         input_status_code = tools.check_input(limit_days, mode, latitude, longitude)
