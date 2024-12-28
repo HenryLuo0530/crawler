@@ -19,16 +19,27 @@ async def ping(ctx):
     await ctx.send(f'Migu is {round(bot.latency*1000)} years old')
 
 @bot.command()
-async def seeing(ctx, limit_days=3, mode=1, latitude=25.17, longitude=121.56):
-    input_status_code = tools.check_input(limit_days, mode, latitude, longitude)
+async def seeing(ctx, limit_days="3", mode="1", latitude="25.17", longitude="121.56"):
+    input_status_code = 0
+    try:
+        limit_days = int(limit_days)
+        mode = int(mode)
+        latitude = float(latitude)
+        longitude = float(longitude)
+    except ValueError:
+        input_status_code = 10
+    else:    
+        input_status_code = tools.check_input(limit_days, mode, latitude, longitude)
     if input_status_code > 0:
         match input_status_code:
             case 1:
-                await ctx.send("Sorrgy Migu see nothing...")
+                await ctx.send("Sorrgy Migu see nothing... :eyes:")
             case 2:
                 await ctx.send("Migu is NOT A SOOTHSAYER :rage:")
             case 3:
-                await ctx.send("OH NO! Migu does not talk to british ppl")
+                await ctx.send("OH NO! Migu does not talk to british ppl :frowning2:")
+            case 10:
+                await ctx.send("What are you dooin :face_with_spiral_eyes:")
         return
 
     crawler_ststus_code = crawler.crawl(limit_days, latitude, longitude)
