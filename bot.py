@@ -139,4 +139,15 @@ async def seeing(ctx, limit_days="3", mode="1", latitude="25.17", longitude="121
                     msg += ":green_circle:  "
             await ctx.send(msg)
 
+@bot.command()
+async def coin(ctx):
+    coin = random.randint(0, 1)
+    if coin:
+        coin_head = discord.File('./image/coin_head.jpg')
+        await ctx.send(file = coin_head)
+            
+    else:
+        coin_tail = discord.File('./image/coin_tail.jpg')
+        await ctx.send(file = coin_tail)
+
 bot.run(setting["TOKEN"])
