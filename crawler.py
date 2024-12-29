@@ -2,7 +2,7 @@ import requests
 from bs4 import BeautifulSoup
 import json
 
-def crawl(days: int, latitude: int, longitude: int) -> int:
+def seeing_crawl(days: int, latitude: int, longitude: int) -> int:
     url = f"https://clearoutside.com/forecast/{latitude}/{longitude}?view=midnight"
     headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.6 Safari/605.1.15'}
     response = requests.get(url, headers=headers)
