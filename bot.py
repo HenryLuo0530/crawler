@@ -14,8 +14,19 @@ bot = commands.Bot(command_prefix='!', intents=intents)
 @bot.event
 async def on_ready():
     print("[S] Bot is online")
+    #channel = await bot.fetch_channel(setting["CHANNEL_ID"])
+    #await channel.send("Migu is awake!")
+
+@bot.event
+async def on_message(message):
+    if(message.content == "Migu"):
+        channel = await bot.fetch_channel(setting["CHANNEL_ID"])
+        await channel.send("Migu!")
+
+@bot.event
+async def on_message_delete(message):
     channel = await bot.fetch_channel(setting["CHANNEL_ID"])
-    await channel.send("Migu is awake!")
+    await channel.send(f"Migu saw you deleted the message:\n > {message.content}")
 
 @bot.command()
 async def ping(ctx):
@@ -45,7 +56,7 @@ async def seeing(ctx, limit_days="3", mode="1", latitude="25.17", longitude="121
                 await ctx.send("What are you dooin :face_with_spiral_eyes:")
         return
 
-    crawler_ststus_code = crawler.crawl(limit_days, latitude, longitude)
+    crawler_ststus_code = crawler.seeing_crawl(limit_days, latitude, longitude)
     if (crawler_ststus_code == 1):
         await ctx.send("Sorrgy accident... Migu broke the web")
         return
@@ -121,6 +132,7 @@ async def seeing(ctx, limit_days="3", mode="1", latitude="25.17", longitude="121
             for info in find_list:
                 msg = f'{tools.dayTranslation(info["start_day"])} {info["start_time"]}:00 ~ {tools.dayTranslation(info["end_day"])} {info["end_time"]}:00 max {info["max_hour"]}hr'
                 await ctx.send(msg)
+        return
 
     elif mode == 1:
         for d in data:
@@ -140,6 +152,7 @@ async def seeing(ctx, limit_days="3", mode="1", latitude="25.17", longitude="121
                 else:
                     msg += ":green_circle:  "
             await ctx.send(msg)
+        return
 
 @bot.command()
 async def coin(ctx):
