@@ -17,11 +17,13 @@ async def on_ready():
     #channel = await bot.fetch_channel(setting["CHANNEL_ID"])
     #await channel.send("Migu is awake!")
 
+"""
 @bot.event
 async def on_message(message):
     if(message.content == "Migu"):
         channel = await bot.fetch_channel(setting["CHANNEL_ID"])
         await channel.send("Migu!")
+"""
 
 @bot.event
 async def on_message_delete(message):
