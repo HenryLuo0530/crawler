@@ -14,6 +14,8 @@ bot = commands.Bot(command_prefix='!', intents=intents)
 @bot.event
 async def on_ready():
     print("[S] Bot is online")
+    channel = await bot.fetch_channel(setting["CHANNEL_ID"])
+    await channel.send("Migu is awake!")
 
 @bot.command()
 async def ping(ctx):
