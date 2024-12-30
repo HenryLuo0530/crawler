@@ -16,9 +16,12 @@ def dayTranslation(day_and_date: str) -> str:
     return msg
 
 def check_input(limit_days, mode, latitude, longitude) -> int:
-    if (limit_days) < 1: return 1
-    elif (limit_days > 7): return 2
+    if (limit_days < 1):
+        return 1
+    elif (limit_days > 7):
+        return 2
 
-    if not(0 <= mode <= 1): return 3
+    if not(0 <= mode <= 1):
+        return 3
     
     return 0

@@ -7,6 +7,8 @@ import random
 
 with open("setting.json", "r", encoding="utf-8") as file:
     setting = json.load(file)
+with open("quote.json", "r", encoding="utf-8") as file:
+    quote = json.load(file)
 
 intents = discord.Intents.all()
 bot = commands.Bot(command_prefix='!', intents=intents)
@@ -14,8 +16,8 @@ bot = commands.Bot(command_prefix='!', intents=intents)
 @bot.event
 async def on_ready():
     print("[S] Bot is online")
-    #channel = await bot.fetch_channel(setting["CHANNEL_ID"])
-    #await channel.send("Migu is awake!")
+    channel = await bot.fetch_channel(setting["CHANNEL_ID"])
+    await channel.send(quote["Bot_awake"])
 
 """
 @bot.event
@@ -38,30 +40,20 @@ async def ping(ctx):
 async def seeing(ctx, limit_days="3", mode="1", latitude="25.17", longitude="121.56"):
     input_status_code = 0
     try:
-        limit_days = int(limit_days)
-        mode = int(mode)
-        latitude = float(latitude)
-        longitude = float(longitude)
-    except:
-        input_status_code = 10
-    else:    
+        limit_days, mode = int(limit_days), int(mode)
+        latitude, longitude = float(latitude), float(longitude)
         input_status_code = tools.check_input(limit_days, mode, latitude, longitude)
+    except:
+        input_status_code = 10 
     if input_status_code > 0:
-        match input_status_code:
-            case 1:
-                await ctx.send("Sorrgy Migu see nothing... :eyes:")
-            case 2:
-                await ctx.send("Migu is NOT A SOOTHSAYER :rage:")
-            case 3:
-                await ctx.send("OH NO! Migu does not talk to british ppl :frowning2:")
-            case 10:
-                await ctx.send("What are you dooin :face_with_spiral_eyes:")
+        await ctx.send(quote["Seeing_input_status_code"][input_status_code])
         return
 
     crawler_ststus_code = crawler.seeing_crawl(limit_days, latitude, longitude)
-    if (crawler_ststus_code == 1):
-        await ctx.send("Sorrgy accident... Migu broke the web")
+    if crawler_ststus_code > 0:
+        await ctx.send(quote["Seeing_crawler_status_code"][1])
         return
+    
     with open("seeings.json", "r", encoding="utf-8") as file:
         data = json.load(file)
 

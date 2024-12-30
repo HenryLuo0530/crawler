@@ -1,8 +1,7 @@
 python_env/
 __pycache__/
 image/
-rawdata.html
-test.txt
 seeings.json
 setting.json
+quote.json
 .DS_Store
