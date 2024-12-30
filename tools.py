@@ -141,17 +141,22 @@ def print_time_table(data: list) -> list:
         time_message = "  ".join(time_table)
         one_day_message.append(time_message)
 
-        quality_table = "=>  "
-        for tq in d["time_and_quality"]:
-            time_and_quality = tq.split(" ")
-            # time = time_and_quality[1]
-            quality = time_and_quality[2]
-            if quality == "Bad":
-                quality_table += ":red_circle:  "
-            elif quality == "OK":
-                quality_table += ":orange_circle:  "
-            else:
-                quality_table += ":green_circle:  "
-        one_day_message.append(quality_table)
+        quality_table = ["=>"]
+        if not d["time_and_quality"]:
+            for _ in range(0, 24):
+                quality_table.append(":cross_mark:")
+        else:
+            for tq in d["time_and_quality"]:
+                time_and_quality = tq.split(" ")
+                # time = time_and_quality[1]
+                quality = time_and_quality[2]
+                if quality == "Bad":
+                    quality_table.append(":red_circle:")
+                elif quality == "OK":
+                    quality_table.append(":orange_circle:")
+                else:
+                    quality_table.append(":green_circle:")
+        quality_message = "  ".join(quality_table)
+        one_day_message.append(quality_message)
         message_list += one_day_message
     return message_list
