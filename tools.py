@@ -18,19 +18,19 @@ def day_translation(day_and_date: str) -> str:
     msg = " ".join([translated_day, formatted_date])
     return msg
 
-def check_input(limit_days: int, mode: str, latitude: float, longitude: float) -> int:
+def check_input(limit_days: int, types: int, method: str, latitude: float, longitude: float) -> int:
     if (limit_days < 1):
         return 1
     elif (limit_days > 7):
         return 2
 
-    mode_list = ["0-a", "0-s", "1-a", "1-s"]
-    if mode not in mode_list:
+    method_list = ['a', 's']
+    if (types < 0) or (types > 1) or (method not in method_list):
         return 3
     
     return 0
 
-def find_max_time(data: list, method: str) -> list:
+def print_max_time(data: list, method: str) -> list:
     time_and_qualities = []
     for d in data:
         time_and_qualities += d["time_and_quality"]
