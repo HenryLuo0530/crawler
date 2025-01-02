@@ -30,10 +30,8 @@ def check_input(limit_days: int, mode: int, latitude: float, longitude: float) -
     return 0
 
 def find_max_time(data: list) -> list:
-    day_and_dates = []
     time_and_qualities = []
     for d in data:
-        day_and_dates.append(d["day_and_date"])
         time_and_qualities += d["time_and_quality"]
     
     head_day, current_day = 0, 0
@@ -58,11 +56,13 @@ def find_max_time(data: list) -> list:
         else:
             if is_continue:
                 find_dict = {}
-                find_dict["start_day"] = day_and_dates[head_day]
-                find_dict["end_day"] = day_and_dates[current_day]
+                find_dict["start_day"] = data[head_day]["day_and_date"]
+                find_dict["end_day"] = data[current_day]["day_and_date"]
                 find_dict["start_time"] = head_time
                 find_dict["end_time"] = previous_time
                 find_dict["max_hour"] = current_max_hour
+                find_dict["moon_phase"] = data[head_day]["moon_phase"]
+                find_dict["moon_percentage"] = data[head_day]["moon_percentage"]
                 find_list.append(find_dict)
                 current_max_hour = 0
                 is_first = True
@@ -75,11 +75,13 @@ def find_max_time(data: list) -> list:
     
     if is_continue:
         find_dict = {}
-        find_dict["start_day"] = day_and_dates[head_day]
-        find_dict["end_day"] = day_and_dates[current_day - 1]
+        find_dict["start_day"] = data[head_day]["day_and_date"]
+        find_dict["end_day"] = data[current_day - 1]["day_and_date"]
         find_dict["start_time"] = head_time
         find_dict["end_time"] = previous_time
         find_dict["max_hour"] = current_max_hour
+        find_dict["moon_phase"] = data[head_day]["moon_phase"]
+        find_dict["moon_percentage"] = data[head_day]["moon_percentage"]
         find_list.append(find_dict)
 
     message_list = []
@@ -92,12 +94,16 @@ def find_max_time(data: list) -> list:
         message_list.append(data_not_found_message[choose_message])
     else:
         for info in find_list:
+            max_hour = "{:<2}hr".format(info["max_hour"])
             start_day = day_translation(info["start_day"])
             end_day = day_translation(info["end_day"])
             start_time = "{:0>2}:00".format(info["start_time"])
             end_time = "{:0>2}:00".format(info["end_time"])
-            max_hour = "max {:=2}hr".format(info["max_hour"])
-            max_time_message = f"`{start_day} {start_time} ~ {end_day} {end_time} {max_hour}`"
+            moon_phase = moon_translation(info["moon_phase"])
+            moon_percentage = info["moon_percentage"]
+            max_time_message = f"""
+                `{max_hour}` `{start_day} {start_time} ~ {end_day} {end_time}` | {moon_phase} `{moon_percentage}`
+            """
             message_list.append(max_time_message)
     return message_list
 
