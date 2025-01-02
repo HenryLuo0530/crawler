@@ -17,7 +17,7 @@ bot = commands.Bot(command_prefix='!', intents=intents)
 async def on_ready():
     print("[S] Bot is online")
     channel = await bot.fetch_channel(setting["CHANNEL_ID"])
-    await channel.send(quote["bot_awake"])
+    await channel.send(quote["on_ready"])
 
 """
 @bot.event

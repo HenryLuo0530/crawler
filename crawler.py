@@ -18,9 +18,9 @@ def seeing_crawl(days: int, latitude: int, longitude: int) -> int:
     for all in elements:
         data = {}
 
-        #處理日期
-        dates = all.find("div", class_="fc_day_date")
-        data["dates"] = dates.text
+        #處理星期與日期
+        day_and_date = all.find("div", class_="fc_day_date")
+        data["day_and_date"] = day_and_date.text
 
         #處理月亮
         moon_info = all.find("div", class_="fc_moon")

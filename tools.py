@@ -14,8 +14,8 @@ def day_translation(day_and_date: str) -> str:
     day = time_list[0]
     translated_day = day_dictionary[day]
     date = time_list[1]
-    formated_date = "{:0>2}".format(date)
-    msg = " ".join([translated_day, formated_date])
+    formatted_date = "{:0>2}".format(date)
+    msg = " ".join([translated_day, formatted_date])
     return msg
 
 def check_input(limit_days: int, mode: int, latitude: float, longitude: float) -> int:
@@ -33,10 +33,10 @@ def find_max_time(data: list) -> list:
     day_and_dates = []
     time_and_qualities = []
     for d in data:
-        day_and_dates.append(d["dates"])
+        day_and_dates.append(d["day_and_date"])
         time_and_qualities += d["time_and_quality"]
     
-    current_day, head_day = 0, 0
+    head_day, current_day = 0, 0
     head_time, previous_time = 0, 0
     current_max_hour = 0
     is_first = True
@@ -92,9 +92,12 @@ def find_max_time(data: list) -> list:
         message_list.append(data_not_found_message[choose_message])
     else:
         for info in find_list:
-            translated_start_day = day_translation(info["start_day"])
-            translated_end_day = day_translation(info["end_day"])
-            max_time_message = f"{translated_start_day} {info["start_time"]}:00 ~ {translated_end_day} {info["end_time"]}:00 max {info["max_hour"]}hr"
+            start_day = day_translation(info["start_day"])
+            end_day = day_translation(info["end_day"])
+            start_time = "{:0>2}:00".format(info["start_time"])
+            end_time = "{:0>2}:00".format(info["end_time"])
+            max_hour = "max {:=2}hr".format(info["max_hour"])
+            max_time_message = f"`{start_day} {start_time} ~ {end_day} {end_time} {max_hour}`"
             message_list.append(max_time_message)
     return message_list
 
@@ -148,14 +151,14 @@ def print_time_table(data: list) -> list:
         one_day_message = []
         
         #處理星期與日期
-        translated_day = day_translation(d["dates"])
+        translated_day = day_translation(d["day_and_date"])
         day_message = f"`{translated_day}`"
         #處理月亮
         translated_moon_phase = moon_translation(d["moon_phase"])
         moon_percentage = d["moon_percentage"]
-        formated_moon_percentage = "`{:0>3}`".format(moon_percentage)
-        moon_message = " ".join([translated_moon_phase, formated_moon_percentage])
-        one_day_message.append(day_message + " | " + moon_message)
+        formatted_moon_percentage = "`{:0>3}`".format(moon_percentage)
+        moon_message = " ".join([translated_moon_phase, formatted_moon_percentage])
+        one_day_message.append(f"{day_message} | {moon_message}")
 
         #處理時間表
         # source: https://emoji.gg/pack/4123-keycap-emoji-11-to-42#
