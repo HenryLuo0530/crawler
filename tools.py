@@ -12,9 +12,10 @@ def day_translation(day_and_date: str) -> str:
     }
     time_list = day_and_date.split(" ")
     day = time_list[0]
-    date = time_list[1]
     translated_day = day_dictionary[day]
-    msg = translated_day + " " + date
+    date = time_list[1]
+    formated_date = "{:0>2}".format(date)
+    msg = " ".join([translated_day, formated_date])
     return msg
 
 def check_input(limit_days: int, mode: int, latitude: float, longitude: float) -> int:
@@ -127,21 +128,46 @@ def hour_translation(hour: int) -> str:
     translated_hour = number_dictionary[hour]
     return translated_hour
 
+def moon_translation(moon_phase: str) -> str:
+    phase_dictionary = {
+        "New Moon": ":new_moon:",
+        "Waxing Crescent": ":waxing_crescent_moon:",
+        "First Quarter": ":first_quarter_moon:",
+        "Waxing Gibbous": ":waxing_gibbous_moon:",
+        "Full Moon": ":full_moon:",
+        "Waning Gibbous": ":waning_gibbous_moon:",
+        "Last Quarter": ":last_quarter_moon:",
+        "Waning Crescent": ":waning_crescent_moon:"
+    }
+    translated_moon_phase = phase_dictionary[moon_phase]
+    return translated_moon_phase
+
 def print_time_table(data: list) -> list:
     message_list = []
     for d in data:
         one_day_message = []
+        
+        #處理星期與日期
         translated_day = day_translation(d["dates"])
-        one_day_message.append(translated_day)
+        day_message = f"`{translated_day}`"
+        #處理月亮
+        translated_moon_phase = moon_translation(d["moon_phase"])
+        moon_percentage = d["moon_percentage"]
+        formated_moon_percentage = "`{:0>3}`".format(moon_percentage)
+        moon_message = " ".join([translated_moon_phase, formated_moon_percentage])
+        one_day_message.append(day_message + " | " + moon_message)
+
+        #處理時間表
         # source: https://emoji.gg/pack/4123-keycap-emoji-11-to-42#
-        time_table = ["=>"]
+        time_table = ["|"]
         for hour in range(0, 24):
             translated_hour = hour_translation(hour)
             time_table.append(translated_hour)
         time_message = "  ".join(time_table)
         one_day_message.append(time_message)
 
-        quality_table = ["=>"]
+        #處理品質
+        quality_table = ["|"]
         if not d["time_and_quality"]:
             for _ in range(0, 24):
                 quality_table.append(":cross_mark:")
@@ -158,5 +184,6 @@ def print_time_table(data: list) -> list:
                     quality_table.append(":green_circle:")
         quality_message = "  ".join(quality_table)
         one_day_message.append(quality_message)
+
         message_list += one_day_message
     return message_list

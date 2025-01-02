@@ -20,8 +20,14 @@ def seeing_crawl(days: int, latitude: int, longitude: int) -> int:
 
         #處理日期
         dates = all.find("div", class_="fc_day_date")
-        date = dates.text
-        data["dates"] = date
+        data["dates"] = dates.text
+
+        #處理月亮
+        moon_info = all.find("div", class_="fc_moon")
+        moon_phase = moon_info.find("span", class_="fc_moon_phase")
+        data["moon_phase"] = moon_phase.text
+        moon_percentage = moon_info.find("span", class_="fc_moon_percentage")
+        data["moon_percentage"] = moon_percentage.text
 
         #處理時間和品質
         ul = all.find("div", class_="fc_hours fc_hour_ratings")

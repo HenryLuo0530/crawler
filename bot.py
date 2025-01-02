@@ -30,7 +30,7 @@ async def on_message(message):
 @bot.event
 async def on_message_delete(message):
     channel = await bot.fetch_channel(setting["CHANNEL_ID"])
-    await channel.send(f"Migu saw you deleted the message:\n > {message.content}")
+    await channel.send(f"Migu saw you deleted the message:\n >>> {message.content}")
 
 @bot.command()
 async def ping(ctx):
