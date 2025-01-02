@@ -37,10 +37,11 @@ async def ping(ctx):
     await ctx.send(f'Migu is {round(bot.latency*1000)} years old')
 
 @bot.command()
-async def seeing(ctx, limit_days="3", mode="1", latitude="25.17", longitude="121.56"):
+async def seeing(ctx, limit_days="3", mode="1-s", latitude="25.17", longitude="121.56"):
     input_status_code = 0
     try:
-        limit_days, mode = int(limit_days), int(mode)
+        limit_days = int(limit_days)
+        mode = str(mode)
         latitude, longitude = float(latitude), float(longitude)
         input_status_code = tools.check_input(limit_days, mode, latitude, longitude)
     except:
@@ -56,9 +57,12 @@ async def seeing(ctx, limit_days="3", mode="1", latitude="25.17", longitude="121
     
     with open("seeings.json", "r", encoding="utf-8") as file:
         data = json.load(file)
-    match mode:
+    type_and_method = mode.split("-")
+    types = int(type_and_method[0])
+    method = type_and_method[1]
+    match types:
         case 0:
-            message_list = tools.find_max_time(data)
+            message_list = tools.find_max_time(data, method)
             for message in message_list:
                 await ctx.send(message)
         case 1:

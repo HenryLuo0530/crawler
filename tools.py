@@ -18,18 +18,19 @@ def day_translation(day_and_date: str) -> str:
     msg = " ".join([translated_day, formatted_date])
     return msg
 
-def check_input(limit_days: int, mode: int, latitude: float, longitude: float) -> int:
+def check_input(limit_days: int, mode: str, latitude: float, longitude: float) -> int:
     if (limit_days < 1):
         return 1
     elif (limit_days > 7):
         return 2
 
-    if not(0 <= mode <= 1):
+    mode_list = ["0-a", "0-s", "1-a", "1-s"]
+    if mode not in mode_list:
         return 3
     
     return 0
 
-def find_max_time(data: list) -> list:
+def find_max_time(data: list, method: str) -> list:
     time_and_qualities = []
     for d in data:
         time_and_qualities += d["time_and_quality"]
@@ -39,6 +40,7 @@ def find_max_time(data: list) -> list:
     current_max_hour = 0
     is_first = True
     is_continue = False
+    has_find_any = False
 
     find_list = []
     for tq in time_and_qualities:
@@ -50,20 +52,23 @@ def find_max_time(data: list) -> list:
                 head_day = current_day
                 head_time = time
                 is_first = False
+                has_find_any = True
             previous_time = time
             current_max_hour += 1
             is_continue = True
         else:
+            need_storing: bool = (method == 'a') or (current_max_hour >= 5)
             if is_continue:
-                find_dict = {}
-                find_dict["start_day"] = data[head_day]["day_and_date"]
-                find_dict["end_day"] = data[current_day]["day_and_date"]
-                find_dict["start_time"] = head_time
-                find_dict["end_time"] = previous_time
-                find_dict["max_hour"] = current_max_hour
-                find_dict["moon_phase"] = data[head_day]["moon_phase"]
-                find_dict["moon_percentage"] = data[head_day]["moon_percentage"]
-                find_list.append(find_dict)
+                if need_storing:
+                    find_dict = {}
+                    find_dict["start_day"] = data[head_day]["day_and_date"]
+                    find_dict["end_day"] = data[current_day]["day_and_date"]
+                    find_dict["start_time"] = head_time
+                    find_dict["end_time"] = previous_time
+                    find_dict["max_hour"] = current_max_hour
+                    find_dict["moon_phase"] = data[head_day]["moon_phase"]
+                    find_dict["moon_percentage"] = data[head_day]["moon_percentage"]
+                    find_list.append(find_dict)
                 current_max_hour = 0
                 is_first = True
                 is_continue = False
@@ -73,7 +78,8 @@ def find_max_time(data: list) -> list:
         if time == 23:
             current_day += 1
     
-    if is_continue:
+    need_storing: bool = (method == 'a') or (current_max_hour >= 5)
+    if is_continue and need_storing:
         find_dict = {}
         find_dict["start_day"] = data[head_day]["day_and_date"]
         find_dict["end_day"] = data[current_day - 1]["day_and_date"]
@@ -86,12 +92,18 @@ def find_max_time(data: list) -> list:
 
     message_list = []
     if not find_list:
-        data_not_found_message = [
-            "Oh no! Migu canNOT find good hours!",
-            "Oh wow! Migu see beautiful clouds!"
-        ]
-        choose_message = randint(0, 1)
-        message_list.append(data_not_found_message[choose_message])
+        if not has_find_any:
+            data_not_found_message = [
+                "Oh no! Migu canNOT find good hours!",
+                "Oh wow! Migu see NO star!"
+            ]
+            choose_message = randint(0, 1)
+            message_list.append(data_not_found_message[choose_message])
+        else: # has find data, but mode = "standard" => max hour < 5hr
+            data_not_standard_message = [
+                "Ooops! Good hours NOT Migu standard!"
+            ]
+            message_list.append(data_not_standard_message[0])
     else:
         for info in find_list:
             max_hour = "{:<2}hr".format(info["max_hour"])
