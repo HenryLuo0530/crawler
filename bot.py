@@ -30,11 +30,15 @@ async def on_message(message):
 @bot.event
 async def on_message_delete(message):
     channel = await bot.fetch_channel(setting["CHANNEL_ID"])
-    await channel.send(f"Migu saw you deleted the message:\n >>> {message.content}")
+    message = " ".join([quote["on_message_delete"], message.content])
+    await channel.send(message)
 
 @bot.command()
 async def ping(ctx):
-    await ctx.send(f'Migu is {round(bot.latency*1000)} years old')
+    message = " ".join([
+        quote["ping"][0], f"{round(bot.latency*1000)}", quote["ping"][1]
+    ])
+    await ctx.send(message)
 
 @bot.command()
 async def seeing(ctx, limit_days="7", types="1", method="s", latitude="25.17", longitude="121.56"):

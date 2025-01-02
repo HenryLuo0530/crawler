@@ -1,4 +1,10 @@
 from random import randint
+import json
+
+def get_quote() -> dict:
+    with open("quote.json", "r", encoding="utf-8") as file:
+        quote = json.load(file)
+    return quote
 
 def day_translation(day_and_date: str) -> str:
     day_dictionary = {
@@ -91,18 +97,14 @@ def print_max_time(data: list, method: str) -> list:
         find_list.append(find_dict)
 
     message_list = []
+    quote = get_quote()
     if not find_list:
         if not has_find_any:
-            data_not_found_message = [
-                "Oh no! Migu canNOT find good hours!",
-                "Oh wow! Migu see NO star!"
-            ]
+            data_not_found_message = quote["print_max_time_data_not_found"]
             choose_message = randint(0, 1)
             message_list.append(data_not_found_message[choose_message])
         else: # has find data, but mode = "standard" => max hour < 5hr
-            data_not_standard_message = [
-                "Ooops! Good hours NOT Migu standard!"
-            ]
+            data_not_standard_message = quote["print_max_time_data_not_standard"]
             message_list.append(data_not_standard_message[0])
     else:
         for info in find_list:
@@ -196,8 +198,9 @@ def print_time_table(data: list, limit_days: int, method: str) -> list:
         is_all_invisible = True
     
     message_list = []
+    quote = get_quote()
     if is_all_invisible:
-        message_list.append("Ooops! Good days NOT Migu standard!")
+        message_list.append(quote["print_time_table_data_not_standard"][0])
         return message_list
     for today, d in enumerate(data):
         one_day_message = []
