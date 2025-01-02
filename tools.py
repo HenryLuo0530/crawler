@@ -163,9 +163,43 @@ def moon_translation(moon_phase: str) -> str:
     translated_moon_phase = phase_dictionary[moon_phase]
     return translated_moon_phase
 
-def print_time_table(data: list) -> list:
+def print_time_table(data: list, limit_days: int, method: str) -> list:
+    print_days = [False] * limit_days
+    if method == 's':
+        for day, d in enumerate(data):
+            time_and_quality = d["time_and_quality"]
+            
+            max_hour = 0
+            is_standard = False
+            for hour, q in enumerate(time_and_quality):
+                quality = (q.split(" "))[2]
+                if (quality == "Good") and (not (6 <= hour <= 17)):
+                    max_hour += 1
+                    if max_hour == 3:
+                        is_standard = True
+                        break
+                else:
+                    max_hour = 0
+                    continue
+            
+            if is_standard:
+                print_days[day] = True
+                if 0 < day:
+                    print_days[day - 1] = True
+                if day < limit_days - 1:
+                    print_days[day + 1] = True
+    else:
+        print_days = [True] * limit_days
+    
+    is_all_invisible = False
+    if not any(print_days):
+        is_all_invisible = True
+    
     message_list = []
-    for d in data:
+    if is_all_invisible:
+        message_list.append("Ooops! Good days NOT Migu standard!")
+        return message_list
+    for today, d in enumerate(data):
         one_day_message = []
         
         #處理星期與日期
@@ -177,6 +211,10 @@ def print_time_table(data: list) -> list:
         formatted_moon_percentage = "`{:0>3}`".format(moon_percentage)
         moon_message = " ".join([translated_moon_phase, formatted_moon_percentage])
         one_day_message.append(f"{day_message} | {moon_message}")
+
+        if not print_days[today]:
+            message_list += one_day_message
+            continue
 
         #處理時間表
         # source: https://emoji.gg/pack/4123-keycap-emoji-11-to-42#

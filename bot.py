@@ -37,7 +37,7 @@ async def ping(ctx):
     await ctx.send(f'Migu is {round(bot.latency*1000)} years old')
 
 @bot.command()
-async def seeing(ctx, limit_days="3", types="1", method="s", latitude="25.17", longitude="121.56"):
+async def seeing(ctx, limit_days="7", types="1", method="s", latitude="25.17", longitude="121.56"):
     input_status_code = 0
     try:
         limit_days, types = int(limit_days), int(types)
@@ -63,7 +63,7 @@ async def seeing(ctx, limit_days="3", types="1", method="s", latitude="25.17", l
             for message in message_list:
                 await ctx.send(message)
         case 1:
-            message_list = tools.print_time_table(data)
+            message_list = tools.print_time_table(data, limit_days, method)
             for message in message_list:
                 await ctx.send(message)
 
