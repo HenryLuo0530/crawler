@@ -5,17 +5,21 @@ import crawler
 import tools
 import random
 
-with open("setting.json", "r", encoding="utf-8") as file:
-    setting = json.load(file)
-with open("quote.json", "r", encoding="utf-8") as file:
-    quote = json.load(file)
+setting = tools.get_setting()
+quote = tools.get_quote()
+print(f"[I] Using {setting["LANGUAGE"]} as bot language")
+
+def load_setting():
+    global setting, quote
+    setting = tools.get_setting()
+    quote = tools.get_quote()
 
 intents = discord.Intents.all()
 bot = commands.Bot(command_prefix='!', intents=intents)
 
 @bot.event
 async def on_ready():
-    print("[S] Bot is online")
+    print("[I] Bot is online")
     channel = await bot.fetch_channel(setting["CHANNEL_ID"])
     await channel.send(quote["on_ready"])
 
@@ -32,6 +36,15 @@ async def on_message_delete(message):
     channel = await bot.fetch_channel(setting["CHANNEL_ID"])
     message = " ".join([quote["on_message_delete"], message.content])
     await channel.send(message)
+
+@bot.command()
+async def language(ctx, set_language):
+    set_language_status = tools.set_language(set_language)
+    if set_language_status == 0:
+        load_setting()
+        print(f"[S] Change bot language to {setting["LANGUAGE"]}")
+    else:
+        print(f"[E] Fail to change the language, using {setting["LANGUAGE"]} instead")
 
 @bot.command()
 async def ping(ctx):

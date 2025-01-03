@@ -3,5 +3,6 @@ __pycache__/
 image/
 seeings.json
 setting.json
-quote.json
+English_quote.json
+Japanese_quote.json
 .DS_Store
