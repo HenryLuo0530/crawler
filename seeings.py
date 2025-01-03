@@ -3,7 +3,7 @@ import json
 from random import randint
 
 def get_data() -> dict:
-    with open("seeings.json", "r", encoding="utf-8") as file:
+    with open("./json_file/seeings.json", "r", encoding="utf-8") as file:
         data = json.load(file)
     return data
 

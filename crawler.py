@@ -49,7 +49,7 @@ def seeing_crawl(days: int, latitude: int, longitude: int) -> int:
 
         data_list.append(data)
 
-    with open("seeings.json", "w", encoding="utf-8") as file:
+    with open("./json_file/seeings.json", "w", encoding="utf-8") as file:
         json.dump(data_list, file, ensure_ascii=False, indent=4)
     print("[S] Data has been stored successfully.")
     return 0
