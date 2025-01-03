@@ -1,25 +1,19 @@
 import discord
 from discord.ext import commands
-import json
+from random import randint
 import crawler
 import tools
-import random
-
-setting = tools.get_setting()
-quote = tools.get_quote()
-print(f"[I] Using {setting["LANGUAGE"]} as bot language")
-
-def load_setting():
-    global setting, quote
-    setting = tools.get_setting()
-    quote = tools.get_quote()
+import seeings
 
 intents = discord.Intents.all()
 bot = commands.Bot(command_prefix='!', intents=intents)
 
 @bot.event
 async def on_ready():
+    setting = tools.get_setting()
+    quote = tools.get_quote()
     print("[I] Bot is online")
+    print(f"[I] Using {setting["Language"]} as bot language")
     channel = await bot.fetch_channel(setting["CHANNEL_ID"])
     await channel.send(quote["on_ready"])
 
@@ -33,6 +27,8 @@ async def on_message(message):
 
 @bot.event
 async def on_message_delete(message):
+    setting = tools.get_setting()
+    quote = tools.get_quote()
     channel = await bot.fetch_channel(setting["CHANNEL_ID"])
     message = " ".join([quote["on_message_delete"], message.content])
     await channel.send(message)
@@ -41,13 +37,14 @@ async def on_message_delete(message):
 async def language(ctx, set_language):
     set_language_status = tools.set_language(set_language)
     if set_language_status == 0:
-        load_setting()
-        print(f"[S] Change bot language to {setting["LANGUAGE"]}")
+        language = tools.get_language()
+        print(f"[S] Change bot language to {language}")
     else:
-        print(f"[E] Fail to change the language, using {setting["LANGUAGE"]} instead")
+        print(f"[E] Fail to change the language, using {language} instead")
 
 @bot.command()
 async def ping(ctx):
+    quote = tools.get_quote()
     message = " ".join([
         quote["ping"][0], f"{round(bot.latency*1000)}", quote["ping"][1]
     ])
@@ -55,38 +52,34 @@ async def ping(ctx):
 
 @bot.command()
 async def seeing(ctx, limit_days="7", types="1", method="s", latitude="25.17", longitude="121.56"):
-    input_status_code = 0
-    try:
-        limit_days, types = int(limit_days), int(types)
-        method = str(method)
-        latitude, longitude = float(latitude), float(longitude)
-        input_status_code = tools.check_input(limit_days, types, method, latitude, longitude)
-    except:
-        input_status_code = 10 
+    quote = tools.get_quote()
+    input_status_code = seeings.check_input(limit_days, types, method, latitude, longitude)
     if input_status_code > 0:
         await ctx.send(quote["seeing_input_status_code"][input_status_code])
         return
+    else:
+        limit_days, types = int(limit_days), int(types)
+        method = str(method)
+        latitude, longitude = float(latitude), float(longitude)
 
     crawler_ststus_code = crawler.seeing_crawl(limit_days, latitude, longitude)
     if crawler_ststus_code > 0:
         await ctx.send(quote["seeing_crawler_status_code"][1])
         return
     
-    with open("seeings.json", "r", encoding="utf-8") as file:
-        data = json.load(file)
     match types:
         case 0:
-            message_list = tools.print_max_time(data, method)
+            message_list = seeings.print_max_time(method)
             for message in message_list:
                 await ctx.send(message)
         case 1:
-            message_list = tools.print_time_table(data, limit_days, method)
+            message_list = seeings.print_time_table(limit_days, method)
             for message in message_list:
                 await ctx.send(message)
 
 @bot.command()
 async def coin(ctx):
-    coin = random.randint(0, 1)
+    coin = randint(0, 1)
     if coin:
         coin_head = discord.File('./image/coin_head.jpg')
         await ctx.send(file = coin_head)
@@ -94,4 +87,6 @@ async def coin(ctx):
         coin_tail = discord.File('./image/coin_tail.jpg')
         await ctx.send(file = coin_tail)
 
-bot.run(setting["TOKEN"])
+if __name__ == "__main__":
+    setting = tools.get_setting()
+    bot.run(setting["TOKEN"])
