@@ -88,6 +88,14 @@ def moon_translation(moon_phase: str) -> str:
     translated_moon_phase = phase_dictionary[moon_phase]
     return translated_moon_phase
 
+def order_to_hour(order: int) -> int:
+    hour_order = [
+        12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23,
+        0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11
+    ]
+    hour = hour_order[order]
+    return hour
+
 def print_max_time(method: str) -> list:
     data = get_data()
     time_and_qualities = []
@@ -102,11 +110,11 @@ def print_max_time(method: str) -> list:
     has_find_any = False
 
     find_list = []
-    for tq in time_and_qualities:
-        time_and_quality = tq.split(" ")
-        time = int(time_and_quality[1])
-        quality = time_and_quality[2]
-        if (quality == "Good") and (not (6 <= time <= 17)):
+    for time, quality in time_and_qualities:
+        time = int(time)
+        astro_dark_start = int(data[current_day]["astro_dark"][0])
+        astro_dark_end = int(data[current_day]["astro_dark"][1])
+        if (quality == "Good") and (time >= astro_dark_start or time <= astro_dark_end):
             if is_first:
                 head_day = current_day
                 head_time = time
@@ -121,7 +129,7 @@ def print_max_time(method: str) -> list:
                 if need_storing:
                     find_dict = {}
                     find_dict["start_day"] = data[head_day]["day_and_date"]
-                    find_dict["end_day"] = data[current_day]["day_and_date"]
+                    # find_dict["end_day"] = data[current_day]["day_and_date"]
                     find_dict["start_time"] = head_time
                     find_dict["end_time"] = previous_time
                     find_dict["max_hour"] = current_max_hour
@@ -134,14 +142,14 @@ def print_max_time(method: str) -> list:
             else:
                 pass
 
-        if time == 23:
+        if time == 11:
             current_day += 1
     
     need_storing: bool = (method == 'a') or (current_max_hour >= 5)
     if is_continue and need_storing:
         find_dict = {}
         find_dict["start_day"] = data[head_day]["day_and_date"]
-        find_dict["end_day"] = data[current_day - 1]["day_and_date"]
+        # find_dict["end_day"] = data[current_day - 1]["day_and_date"]
         find_dict["start_time"] = head_time
         find_dict["end_time"] = previous_time
         find_dict["max_hour"] = current_max_hour
@@ -163,13 +171,13 @@ def print_max_time(method: str) -> list:
         for info in find_list:
             max_hour = "{:<2}hr".format(info["max_hour"])
             start_day = day_translation(info["start_day"])
-            end_day = day_translation(info["end_day"])
+            # end_day = day_translation(info["end_day"])
             start_time = "{:0>2}:00".format(info["start_time"])
             end_time = "{:0>2}:00".format(info["end_time"])
             moon_phase = moon_translation(info["moon_phase"])
             moon_percentage = info["moon_percentage"]
             max_time_message = f"""
-                `{max_hour}` `{start_day} {start_time} ~ {end_day} {end_time}` | {moon_phase} `{moon_percentage}`
+                `{max_hour}` `{start_day} {start_time} ~ {end_time}` | {moon_phase} `{moon_percentage}`
             """
             message_list.append(max_time_message)
     return message_list
@@ -183,9 +191,11 @@ def print_time_table(limit_days: int, method: str) -> list:
             
             max_hour = 0
             is_standard = False
-            for hour, q in enumerate(time_and_quality):
-                quality = (q.split(" "))[2]
-                if (quality == "Good") and (not (6 <= hour <= 17)):
+            for hour, quality in time_and_quality:
+                hour = int(hour)
+                astro_dark_start = int(data[day]["astro_dark"][0])
+                astro_dark_end = int(data[day]["astro_dark"][1])
+                if (quality == "Good") and (hour >= astro_dark_start or hour <= astro_dark_end):
                     max_hour += 1
                     if max_hour == 3:
                         is_standard = True
@@ -217,7 +227,7 @@ def print_time_table(limit_days: int, method: str) -> list:
         
         #處理星期與日期
         translated_day = day_translation(d["day_and_date"])
-        day_message = f"`{translated_day}`"
+        day_message = f">>> `{translated_day}`"
         #處理月亮
         translated_moon_phase = moon_translation(d["moon_phase"])
         moon_percentage = d["moon_percentage"]
@@ -228,26 +238,31 @@ def print_time_table(limit_days: int, method: str) -> list:
         if not print_days[today]:
             message_list += one_day_message
             continue
-
+        
+        astro_dark_start = int(data[today]["astro_dark"][0])
+        astro_dark_end = int(data[today]["astro_dark"][1])
         #處理時間表
         # source: https://emoji.gg/pack/4123-keycap-emoji-11-to-42#
-        time_table = ["|"]
-        for hour in range(0, 24):
+        time_table = []
+        for hour in range(astro_dark_start, 24):
+            translated_hour = hour_translation(hour)
+            time_table.append(translated_hour)
+        for hour in range(0, astro_dark_end + 1):
             translated_hour = hour_translation(hour)
             time_table.append(translated_hour)
         time_message = "  ".join(time_table)
         one_day_message.append(time_message)
 
         #處理品質
-        quality_table = ["|"]
+        quality_table = []
         if not d["time_and_quality"]:
-            for _ in range(0, 24):
+            for _ in range(0, astro_dark_start - astro_dark_end + 1):
                 quality_table.append(":cross_mark:")
         else:
-            for tq in d["time_and_quality"]:
-                time_and_quality = tq.split(" ")
-                # time = time_and_quality[1]
-                quality = time_and_quality[2]
+            for time, quality in d["time_and_quality"]:
+                time = int(time)
+                if not (time >= astro_dark_start or time <= astro_dark_end):
+                    continue
                 if quality == "Bad":
                     quality_table.append(":red_circle:")
                 elif quality == "OK":
@@ -257,5 +272,5 @@ def print_time_table(limit_days: int, method: str) -> list:
         quality_message = "  ".join(quality_table)
         one_day_message.append(quality_message)
 
-        message_list += one_day_message
+        message_list.append("\n".join(one_day_message))
     return message_list
