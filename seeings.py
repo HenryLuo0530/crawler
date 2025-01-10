@@ -26,8 +26,8 @@ def check_input(limit_days, types, method, latitude, longitude) -> int:
     
     return 0
 
-def day_translation(day_and_date: str) -> str:
-    day_dictionary = {
+def date_translation(date: dict) -> str:
+    weekday_dictionary = {
         "Monday"   : "星期一",
         "Tuesday"  : "星期二",
         "Wednesday": "星期三",
@@ -36,12 +36,13 @@ def day_translation(day_and_date: str) -> str:
         "Saturday" : "星期六",
         "Sunday"   : "星期日"
     }
-    time_list = day_and_date.split(" ")
-    day = time_list[0]
-    translated_day = day_dictionary[day]
-    date = time_list[1]
-    formatted_date = "{:0>2}".format(date)
-    msg = " ".join([translated_day, formatted_date])
+    weekday = date["weekday"]
+    translated_weekday = weekday_dictionary[weekday]
+    month = date["month"]
+    formatted_month = "{:0>2}".format(month)
+    day = date["day"]
+    formatted_day = "{:0>2}".format(day)
+    msg = f"{translated_weekday} {formatted_month}/{formatted_day}"
     return msg
 
 def hour_translation(hour: int) -> str:
@@ -128,8 +129,8 @@ def print_max_time(method: str) -> list:
             if is_continue:
                 if need_storing:
                     find_dict = {}
-                    find_dict["start_day"] = data[head_day]["day_and_date"]
-                    # find_dict["end_day"] = data[current_day]["day_and_date"]
+                    find_dict["start_day"] = data[head_day]["date"]
+                    # find_dict["end_day"] = data[current_day]["date"]
                     find_dict["start_time"] = head_time
                     find_dict["end_time"] = previous_time
                     find_dict["max_hour"] = current_max_hour
@@ -148,8 +149,8 @@ def print_max_time(method: str) -> list:
     need_storing: bool = (method == 'a') or (current_max_hour >= 5)
     if is_continue and need_storing:
         find_dict = {}
-        find_dict["start_day"] = data[head_day]["day_and_date"]
-        # find_dict["end_day"] = data[current_day - 1]["day_and_date"]
+        find_dict["start_day"] = data[head_day]["date"]
+        # find_dict["end_day"] = data[current_day - 1]["date"]
         find_dict["start_time"] = head_time
         find_dict["end_time"] = previous_time
         find_dict["max_hour"] = current_max_hour
@@ -170,7 +171,7 @@ def print_max_time(method: str) -> list:
     else:
         for info in find_list:
             max_hour = "{:<2}hr".format(info["max_hour"])
-            start_day = day_translation(info["start_day"])
+            start_day = date_translation(info["start_day"])
             # end_day = day_translation(info["end_day"])
             start_time = "{:0>2}:00".format(info["start_time"])
             end_time = "{:0>2}:00".format(info["end_time"])
@@ -226,8 +227,8 @@ def print_time_table(limit_days: int, method: str) -> list:
         one_day_message = []
         
         #處理星期與日期
-        translated_day = day_translation(d["day_and_date"])
-        day_message = f">>> `{translated_day}`"
+        translated_date = date_translation(d["date"])
+        day_message = f">>> `{translated_date}`"
         #處理月亮
         translated_moon_phase = moon_translation(d["moon_phase"])
         moon_percentage = d["moon_percentage"]

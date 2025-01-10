@@ -13,14 +13,36 @@ def seeing_crawl(days: int, latitude: int, longitude: int) -> int:
         print(f"[E] Response status code {response.status_code}.")
         return 1
     soup = BeautifulSoup(response.text, "html.parser")
+
+    generate_info = soup.find("h2").text
+    generate_info_list = generate_info.split(" ")
+    forcast_start_date = generate_info_list[4]
+    forcast_time = forcast_start_date.split("/")
+    forcast_day = forcast_time[0]
+    previous_day = int(forcast_day) - 1
+    forcast_month = forcast_time[1]
+    current_month = int(forcast_month)
+
     elements = soup.find_all("div", class_="fc_day", limit=days)
     data_list = []
     for all in elements:
         data = {}
 
-        #處理星期與日期
-        day_and_date = all.find("div", class_="fc_day_date")
-        data["day_and_date"] = day_and_date.text
+        #處理星期與日期並添加月份
+        weekday_and_day = all.find("div", class_="fc_day_date").text
+        weekday, current_day = weekday_and_day.split(" ")
+        current_day = int(current_day)
+        date = {
+            "weekday": weekday,
+            "month": str(current_month),
+            "day": str(current_day)
+        }
+        data["date"] = date
+        if current_day - previous_day != 1:
+            current_month += 1
+            if current_month == 13:
+                current_month = 1
+        previous_day = current_day
 
         #處理月亮
         moon_info = all.find("div", class_="fc_moon")
