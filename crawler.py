@@ -42,55 +42,22 @@ def seeing_crawl(days: int, latitude: int, longitude: int) -> int:
         end_time_hour = end_time[0]
         data["astro_dark"] = [start_time_hour, end_time_hour]
 
-        lis_bad  = ul_and_daylight.find_all("li", class_="fc_bad")
-        lis_ok   = ul_and_daylight.find_all("li", class_="fc_ok")
-        lis_good = ul_and_daylight.find_all("li", class_="fc_good")
+        li_class_name = ["fc_bad", "fc_ok", "fc_good"]
         time_quality_list = []
-        for li in lis_bad:
-            time_quality = li.text
-            time_and_quality = time_quality.split(" ")
-            time = time_and_quality[1]
-            quality = time_and_quality[2]
-            time_quality_list.append([time, quality])
-        for li in lis_ok:
-            time_quality = li.text
-            time_and_quality = time_quality.split(" ")
-            time = time_and_quality[1]
-            quality = time_and_quality[2]
-            time_quality_list.append([time, quality])
-        for li in lis_good:
-            time_quality = li.text
-            time_and_quality = time_quality.split(" ")
-            time = time_and_quality[1]
-            quality = time_and_quality[2]
-            time_quality_list.append([time, quality])
+        for i in range(0, 3):
+            li_quality = ul_and_daylight.find_all("li", class_=li_class_name[i])
+            for li in li_quality:
+                time_quality = li.text
+                time_and_quality = time_quality.split(" ")
+                time = time_and_quality[1]
+                quality = time_and_quality[2]
+                time_quality_list.append([time, quality])
         
-        sort_key = {
-            "12": 0,
-            "13": 1,
-            "14": 2,
-            "15": 3,
-            "16": 4,
-            "17": 5,
-            "18": 6,
-            "19": 7,
-            "20": 8,
-            "21": 9,
-            "22": 10,
-            "23": 11,
-            "00": 12,
-            "01": 13,
-            "02": 14,
-            "03": 15,
-            "04": 16,
-            "05": 17,
-            "06": 18,
-            "07": 19,
-            "08": 20,
-            "09": 21,
-            "10": 22,
-            "11": 23
-        }
+        sort_hour = [
+            "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23",
+            "00", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11"
+        ]
+        sort_key = { sort_hour[i]: i for i in range(0, 24) }
         time_quality_list_sorted = sorted(time_quality_list, key=lambda k: sort_key[k[0]])
         data["time_and_quality"] = time_quality_list_sorted
 
