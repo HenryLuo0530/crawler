@@ -17,13 +17,15 @@ async def on_ready():
     channel = await bot.fetch_channel(setting["CHANNEL_ID"])
     await channel.send(quote["on_ready"])
 
-"""
 @bot.event
 async def on_message(message):
-    if(message.content == "Migu"):
+    if message.author == bot.user:
+        return
+    if(message.content in ["Migu", "ミグ"]):
+        quote = tools.get_quote()
         channel = await bot.fetch_channel(setting["CHANNEL_ID"])
-        await channel.send("Migu!")
-"""
+        await channel.send(quote["on_message"]["Migu"])
+    await bot.process_commands(message)
 
 @bot.event
 async def on_message_delete(message):
@@ -36,10 +38,13 @@ async def on_message_delete(message):
 @bot.command()
 async def language(ctx, set_language):
     set_language_status = tools.set_language(set_language)
+    quote = tools.get_quote()
+    language = tools.get_language()
     if set_language_status == 0:
-        language = tools.get_language()
+        await ctx.send(quote["language"]["changed"])
         print(f"[S] Change bot language to {language}")
     else:
+        await ctx.send(quote["language"]["failed"])
         print(f"[E] Fail to change the language, using {language} instead")
 
 @bot.command()
