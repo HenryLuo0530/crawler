@@ -84,13 +84,16 @@ async def seeing(ctx, limit_days="7", types="1", method="s", latitude="25.17", l
 
 @bot.command()
 async def coin(ctx):
-    coin = randint(0, 1)
-    if coin:
-        coin_head = discord.File('./image/coin_head.jpg')
-        await ctx.send(file = coin_head)
-    else:
-        coin_tail = discord.File('./image/coin_tail.jpg')
-        await ctx.send(file = coin_tail)
+    coin = randint(0, 100)
+    coin_file: discord.File 
+    if coin == 0:
+        coin_file = discord.File('./image/coin_angry.jpg')
+    elif 1 <= coin <= 50:
+        coin_file = discord.File('./image/coin_head.jpg')
+    else: # 51 <= coin <= 100:
+        coin_file = discord.File('./image/coin_tail.jpg')
+    await ctx.send(str(coin))
+    await ctx.send(file = coin_file)
 
 if __name__ == "__main__":
     setting = tools.get_setting()
