@@ -1,4 +1,4 @@
-import tools
+import extension.tools as tools
 import json
 from random import randint
 
