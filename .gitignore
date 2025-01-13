@@ -3,3 +3,4 @@ __pycache__/
 image/
 json_file/
 .DS_Store
+requirements.txt
