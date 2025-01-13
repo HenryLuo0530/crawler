@@ -1,6 +1,6 @@
+import json
 import requests
 from bs4 import BeautifulSoup
-import json
 
 def seeing_crawl(days: int, latitude: int, longitude: int) -> int:
     url = f"https://clearoutside.com/forecast/{latitude}/{longitude}?view=midday"

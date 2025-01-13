@@ -1,6 +1,7 @@
-import extension.tools as tools
 import json
 from random import randint
+
+from extension import tools
 
 def get_data() -> dict:
     with open("./json_file/seeings.json", "r", encoding="utf-8") as file:

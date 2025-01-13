@@ -1,6 +1,6 @@
+import os
 import discord
 from discord.ext import commands
-import os
 import asyncio
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.cron import CronTrigger
