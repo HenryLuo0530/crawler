@@ -29,7 +29,7 @@ async def on_ready():
     await channel.send(quote["on_ready"])
 
     scheduler = AsyncIOScheduler()
-    scheduler.add_job(report, CronTrigger(hour="23"))
+    scheduler.add_job(report, CronTrigger(hour="8, 16"))
     scheduler.start()
 
 async def load():

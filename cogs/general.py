@@ -7,6 +7,12 @@ from extension import tools
 class General(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+    
+    @commands.command()
+    async def shutdown(self, ctx):
+        await ctx.send("Migu is going to eepy sleepy!")
+        await self.bot.close()
+        print("[I] Bot has been shutted down")
 
     @commands.command()
     async def language(self, ctx, set_language):
