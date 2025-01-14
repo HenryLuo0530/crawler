@@ -9,6 +9,7 @@ class General(commands.Cog):
         self.bot = bot
     
     @commands.command()
+    @commands.is_owner()
     async def shutdown(self, ctx):
         await ctx.send("Migu is going to eepy sleepy!")
         await self.bot.close()

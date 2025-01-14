@@ -39,6 +39,7 @@ async def load():
 
 async def main():
     setting = tools.get_setting()
+    bot.owner_id = setting["OWNER_ID"]
     async with bot:
         await load()
         await bot.start(setting["TOKEN"])
