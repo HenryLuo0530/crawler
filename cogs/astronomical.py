@@ -1,11 +1,28 @@
 import discord
 from discord.ext import commands
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
+from apscheduler.triggers.cron import CronTrigger
 
 from extension import tools, seeings, crawler
 
 class Astronomical(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+
+    async def report(self):
+        setting = tools.get_setting()
+        crawler_ststus = crawler.seeing_crawl(7, 25.17, 121.56)
+        message_list = seeings.print_max_time("s")
+        message_list.insert(0, "This is a Migu auto report")
+        channel = await self.bot.fetch_channel(setting["CHANNEL_ID"])
+        for message in message_list:
+            await channel.send(message)
+
+    @commands.Cog.listener()
+    async def on_ready(self):
+        scheduler = AsyncIOScheduler()
+        scheduler.add_job(self.report, CronTrigger(hour="8, 16"))
+        scheduler.start()
     
     @commands.command()
     async def seeing(self, ctx, limit_days="7", types="1", method="s", latitude="25.17", longitude="121.56"):
