@@ -11,12 +11,16 @@ class Astronomical(commands.Cog):
 
     async def report(self):
         setting = tools.get_setting()
-        crawler_ststus = crawler.seeing_crawl(7, 25.17, 121.56)
-        message_list = seeings.print_max_time("s")
-        message_list.insert(0, "This is a Migu auto report")
+        quote = tools.get_quote()
         channel = await self.bot.fetch_channel(setting["CHANNEL_ID"])
-        for message in message_list:
-            await channel.send(message)
+        crawler_ststus = crawler.seeing_crawl(7, 25.17, 121.56)
+        if crawler_ststus > 0:
+            await channel.send(quote["seeing_crawler_status_code"][1])
+            return
+        message_list = seeings.print_max_time("s")
+        message_list.insert(0, quote["report"])
+        message = "\n".join(message_list)
+        await channel.send(message)
 
     @commands.Cog.listener()
     async def on_ready(self):
