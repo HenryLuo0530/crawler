@@ -11,7 +11,8 @@ class General(commands.Cog):
     @commands.command()
     @commands.is_owner()
     async def shutdown(self, ctx):
-        await ctx.send("Migu is going to eepy sleepy!")
+        quote = tools.get_quote()
+        await ctx.send(quote["shutdown"])
         await self.bot.close()
         print("[I] Bot has been shutted down")
 
