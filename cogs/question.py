@@ -3,7 +3,7 @@ from datetime import datetime
 import discord
 from discord.ext import commands
 
-from extension import tools
+from extension import tools, video_search
 
 class Question(commands.Cog):
     def __init__(self, bot):
@@ -37,6 +37,16 @@ class Question(commands.Cog):
     async def why(self, ctx):
         quote = tools.get_quote()
         await ctx.send(quote["question"]["why"])
+    
+    @commands.command()
+    async def how(self, ctx, *arg):
+        if len(arg) == 0:
+            await ctx.send("How?")
+            return
+        keyword_list = ["How"] + list(arg)
+        keywords = " ".join(keyword_list)
+        video_link = video_search.youtube_search(keywords)
+        await ctx.send(video_link)
 
 async def setup(bot):
     await bot.add_cog(Question(bot))
