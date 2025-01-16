@@ -8,7 +8,7 @@ class General(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
     
-    @commands.command()
+    @commands.command(hidden=True)
     @commands.is_owner()
     async def shutdown(self, ctx):
         quote = tools.get_quote()

@@ -8,6 +8,7 @@ from extension import tools, seeings, crawler
 class Astronomical(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+        self.description = "Migu is watching the sky."
 
     async def report(self):
         setting = tools.get_setting()
