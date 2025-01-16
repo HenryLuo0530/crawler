@@ -84,7 +84,7 @@ def moon_translation(moon_phase: str) -> str:
         "Waxing Gibbous": ":waxing_gibbous_moon:",
         "Full Moon": ":full_moon:",
         "Waning Gibbous": ":waning_gibbous_moon:",
-        "Last Quarter": ":last_quarter_moon:",
+        "Third Quarter": ":last_quarter_moon:",
         "Waning Crescent": ":waning_crescent_moon:"
     }
     translated_moon_phase = phase_dictionary[moon_phase]
