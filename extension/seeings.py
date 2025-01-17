@@ -178,9 +178,9 @@ def print_max_time(method: str) -> list:
             end_time = "{:0>2}:00".format(info["end_time"])
             moon_phase = moon_translation(info["moon_phase"])
             moon_percentage = info["moon_percentage"]
-            max_time_message = f"""
-                `{max_hour}` `{start_day} {start_time} ~ {end_time}` | {moon_phase} `{moon_percentage}`
-            """
+            max_time_message = (
+                f"`{max_hour}` `{start_day} {start_time} ~ {end_time}` | {moon_phase} `{moon_percentage}`"
+            )
             message_list.append(max_time_message)
     return message_list
 
