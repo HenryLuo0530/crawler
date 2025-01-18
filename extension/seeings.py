@@ -76,19 +76,31 @@ def hour_translation(hour: int) -> str:
     translated_hour = number_dictionary[hour]
     return translated_hour
 
-def moon_translation(moon_phase: str) -> str:
-    phase_dictionary = {
-        "New Moon": ":new_moon:",
-        "Waxing Crescent": ":waxing_crescent_moon:",
-        "First Quarter": ":first_quarter_moon:",
-        "Waxing Gibbous": ":waxing_gibbous_moon:",
-        "Full Moon": ":full_moon:",
-        "Waning Gibbous": ":waning_gibbous_moon:",
-        "Third Quarter": ":last_quarter_moon:",
-        "Waning Crescent": ":waning_crescent_moon:"
-    }
-    translated_moon_phase = phase_dictionary[moon_phase]
-    return translated_moon_phase
+def moon_translation(moon_phase: str, moon_percentage: str) -> str:
+    waxing_list = ["Waxing Crescent", "First Quarter", "Waxing Gibbous"]
+    # waning_list = ["Waning Gibbous", "Third Quarter", "Waning Crescent"]
+    phase_list = [
+        (95, 100, "<:moon_full:1329814215892009010>", "<:moon_full:1329814215892009010>"),
+        (82,  94, "<:moon_waxing_88:1329814217678651526>", "<:moon_waning_88:1329814214256103487>"),
+        (70,  81, "<:moon_waxing_75:1329814219494785054>", "<:moon_waning_75:1329814212381507635>"),
+        (57,  69, "<:moon_waxing_63:1329854192256417924>", "<:moon_waning_63:1329814210036764723>"),
+        (43,  56, "<:moon_waxing_50:1329854193934012508>", "<:moon_waning_50:1329814208149454848>"),
+        (32,  42, "<:moon_waxing_38:1329854195473322025>", "<:moon_waning_38:1329814206362681424>"),
+        (20,  31, "<:moon_waxing_25:1329854197029666947>", "<:moon_waning_25:1329814204630175859>"),
+        ( 7,  19, "<:moon_waxing_13:1329854198770307224>", "<:moon_waning_13:1329814202986008576>"),
+        ( 0,   6, "<:moon_new:1329814201295966339>", "<:moon_new:1329814201295966339>")
+    ]
+    
+    is_waxing = moon_phase in waxing_list
+    percentage = int(moon_percentage.strip("%"))
+    for start, end, waxing_moon, waning_moon in phase_list:
+        if start <= percentage <= end:
+            if is_waxing:
+                return waxing_moon
+            else:
+                return waning_moon
+            
+    return ":face_with_raised_eyebrow:" # Error if the function retruns here
 
 def order_to_hour(order: int) -> int:
     hour_order = [
@@ -176,7 +188,7 @@ def print_max_time(method: str) -> list:
             # end_day = day_translation(info["end_day"])
             start_time = "{:0>2}:00".format(info["start_time"])
             end_time = "{:0>2}:00".format(info["end_time"])
-            moon_phase = moon_translation(info["moon_phase"])
+            moon_phase = moon_translation(info["moon_phase"], info["moon_percentage"])
             moon_percentage = info["moon_percentage"]
             max_time_message = (
                 f"`{max_hour}` `{start_day} {start_time} ~ {end_time}` | {moon_phase} `{moon_percentage}`"
@@ -231,7 +243,7 @@ def print_time_table(limit_days: int, method: str) -> list:
         translated_date = date_translation(d["date"])
         day_message = f">>> `{translated_date}`"
         #處理月亮
-        translated_moon_phase = moon_translation(d["moon_phase"])
+        translated_moon_phase = moon_translation(d["moon_phase"], d["moon_percentage"])
         moon_percentage = d["moon_percentage"]
         formatted_moon_percentage = "`{:0>3}`".format(moon_percentage)
         moon_message = " ".join([translated_moon_phase, formatted_moon_percentage])
