@@ -9,10 +9,13 @@ class General(commands.Cog):
         self.bot = bot
     
     @commands.command(hidden=True)
-    @commands.is_owner()
     async def shutdown(self, ctx):
+        setting = tools.get_setting()
         quote = tools.get_quote()
-        await ctx.send(quote["shutdown"])
+        if ctx.author.id != setting["OWNER_ID"]:
+            await ctx.send(quote["shutdown"]["denied"])
+            return
+        await ctx.send(quote["shutdown"]["succeeded"])
         await self.bot.close()
         print("[I] Bot has been shutted down")
 
