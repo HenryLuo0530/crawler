@@ -1,12 +1,14 @@
+from random import randint
+import logging
 import discord
 from discord.ext import commands
-from random import randint
 
 from extension import tools
 
 class General(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+        self.logger = logging.getLogger(__name__)
     
     @commands.command(hidden=True)
     async def shutdown(self, ctx):
@@ -17,7 +19,7 @@ class General(commands.Cog):
             return
         await ctx.send(quote["shutdown"]["succeeded"])
         await self.bot.close()
-        print("[I] Bot has been shutted down")
+        self.logger.info("[I] Bot has been shutted down")
 
     @commands.command()
     async def language(self, ctx, set_language):
@@ -26,10 +28,10 @@ class General(commands.Cog):
         language = tools.get_language()
         if set_language_status == 0:
             await ctx.send(quote["language"]["changed"])
-            print(f"[S] Change bot language to {language}")
+            self.logger.info(f"[I] Change bot language to {language}")
         else:
             await ctx.send(quote["language"]["failed"])
-            print(f"[E] Fail to change the language, using {language} instead")
+            self.logger.info(f"[I] Fail to change the language, using {language} instead")
 
     @commands.command()
     async def ping(self, ctx):
@@ -41,16 +43,25 @@ class General(commands.Cog):
     
     @commands.command()
     async def coin(self, ctx):
-        coin = randint(0, 100)
-        coin_file: discord.File 
-        if coin == 0:
-            coin_file = discord.File('./image/coin_angry.jpg')
-        elif 1 <= coin <= 50:
-            coin_file = discord.File('./image/coin_head.jpg')
-        else: # 51 <= coin <= 100:
-            coin_file = discord.File('./image/coin_tail.jpg')
-        await ctx.send(str(coin))
-        await ctx.send(file = coin_file)
+        flip = randint(0, 100)
+        coin = [
+            ( 0,   0, "coin_angry.png", "by Migu",       "Anggy"),
+            ( 1,  50, "coin_head.png",  "by @kyomu_305", "Head"),
+            (51, 100, "coin_tail.png",  "by Migu",       "Tail")
+        ]
+        
+        colour = discord.Colour.gold()
+        title = str("Migu help you flip a coin")
+        embed = discord.Embed(colour=colour, title=title)
+        for start, end, file_name, image_author, coin_type in coin:
+            if start <= flip <= end:
+                file_path = f"./image/{file_name}"
+                file = discord.File(file_path)
+                embed.description = coin_type
+                embed.set_thumbnail(url=f"attachment://{file_name}")
+                embed.set_footer(text=image_author)
+                await ctx.send(file=file, embed=embed)
+                break
 
 async def setup(bot):
     await bot.add_cog(General(bot))
