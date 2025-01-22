@@ -30,7 +30,7 @@ class Astronomical(commands.Cog):
         scheduler.start()
     
     @commands.command()
-    async def seeing(self, ctx, limit_days="7", types="1", method="s", latitude="25.17", longitude="121.56"):
+    async def seeing(self, ctx, limit_days="3", types="1", method="a", latitude="25.17", longitude="121.56"):
         quote = tools.get_quote()
         input_status_code = seeings.check_input(limit_days, types, method, latitude, longitude)
         if input_status_code > 0:
