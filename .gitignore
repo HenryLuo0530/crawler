@@ -4,4 +4,5 @@ image/
 json_file/
 .DS_Store
 log.log
+last_log.log
 requirements.txt
