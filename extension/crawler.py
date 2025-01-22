@@ -1,16 +1,19 @@
 import json
+import logging
 import requests
 from bs4 import BeautifulSoup
 
 def seeing_crawl(days: int, latitude: int, longitude: int) -> int:
+    logger = logging.getLogger(__name__)
+
     url = f"https://clearoutside.com/forecast/{latitude}/{longitude}?view=midday"
     headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.6 Safari/605.1.15'}
     response = requests.get(url, headers=headers)
     if response.status_code == 200:
-        print("[S] Succeed to request web data.")
+        logger.info("[I] Succeed to request web data.")
     else:
-        print("[E] Failed to request web data.")
-        print(f"[E] Response status code {response.status_code}.")
+        logger.error("[E] Failed to request web data.")
+        logger.error(f"[E] Response status code {response.status_code}.")
         return 1
     soup = BeautifulSoup(response.text, "html.parser")
 
@@ -87,7 +90,7 @@ def seeing_crawl(days: int, latitude: int, longitude: int) -> int:
 
     with open("./json_file/seeings.json", "w", encoding="utf-8") as file:
         json.dump(data_list, file, ensure_ascii=False, indent=4)
-    print("[S] Data has been stored successfully.")
+    logger.info("[I] Data has been stored successfully.")
     return 0
 
 if __name__ == "__main__":
